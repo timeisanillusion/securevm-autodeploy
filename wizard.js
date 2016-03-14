@@ -1,6 +1,10 @@
 /* To install all dependencies do:
- *     npm -g install optimist request-promise bluebird
+*     	npm -g install optimist request-promise bluebird
+*		Full credit for this goes to Mikhail Karasik, EMC Dev
+*		Minor edits by James Scott, EMC SE 
  */
+ 
+ 
 var optimist    = require('optimist'),
     rp          = require('request-promise'),
     Promise     = require('bluebird'),
