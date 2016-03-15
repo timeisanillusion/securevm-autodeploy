@@ -33,10 +33,6 @@ var optimist    = require('optimist'),
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"	
 
 
-/* Used in some scripts */
-	
-export SVMSERVER="${SVMSERVER}"
-	
 	
 function printError(error, msg)
 {
