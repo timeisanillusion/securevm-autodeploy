@@ -13,8 +13,8 @@ var optimist    = require('optimist'),
     cliConfig = optimist
     .usage('Handy script to do automatic CLC post-deploy configuration')
     .alias('h', 'help')     .describe('h', 'Print help and exit')
-    .alias('a', 'addr')     .default('a', 'https://192.168.116.148').describe('a', 'Address of the CLC to connect')
-    .alias('s', 'secpwd')   .default('s', 'tHHoGinI')     .describe('s', 'secadmin password')
+    .alias('a', 'addr')     .default('a', 'https://192.168.116.151').describe('a', 'Address of the CLC to connect')
+    .alias('s', 'secpwd')   .default('s', 'clsecadmin')     .describe('s', 'secadmin password')
     .alias('u', 'user')     .default('u', 'james')           .describe('u', 'Name of the user to create')
     .alias('p', 'password') .default('p', 'tsFt45tqb$$r2')  .describe('p', 'Password of the user to create')
     .alias('l', 'license')  .default('l', 'license.lic')    .describe('l', 'License file name')
@@ -31,6 +31,8 @@ var optimist    = require('optimist'),
 
 	
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"	
+
+
 	
 function printError(error, msg)
 {
@@ -298,7 +300,28 @@ else
                 });
         });
     }
-
+	
+	
+	function remove_machines()
+	{
+		return new Promise(function (resolve, reject) {
+            req({'method': 'GET', 'uri': machinesUrl})
+                .then(function (response) {
+                    var parsed = JSON.parse(response);
+                    for (var i = 0; i < parsed.length; ++i)
+                    {
+						var line = parsed[i].name;
+						req({'method': 'DELETE', 'uri': machinesUrl + '/'+parsed[i].uuid, 'body': JSON.stringify(parsed[i].uuid)});
+						process.stdout.write('Deleting Machine: ' + line + '(' + parsed[i].uuid + ')' + '\n');
+                    }
+                    resolve();
+                })
+                .catch(function (error) {
+                    reject(error);
+                });
+        });
+	}
+	
     function handle_error(error)
     {
         printError(error);
@@ -392,4 +415,16 @@ else
             .then(list_machines)
             .catch(handle_error);
     }
+	
+	else if (workflow === 'removevms')
+    {
+		
+		process.stdout.write(':: Deleting Machines ::\n\n');
+		var p = log_in_as_user()
+            .then(set_access_token)
+            .then(remove_machines)
+            .catch(handle_error);
+        
+    }
+
 }
