@@ -97,9 +97,12 @@ else
         secadminPwdBody = { 'new_password': userPassword, 'first_login_change': false },
         setDnsBody = { 'ip': dns },
         joinClusterBody = { 'host': join_addr, 'rem_password': remSecadminPassword , 'rem_user': 'secadmin'},
+		
+		sdsdeviceBody = {'block': false, 'encrypt': '/dev/sdb'},
 
         approvedNetworkBody = { 'name': 'network','description': 'created'},
         approvedNetworkIpBody = {ip: '192.168.42.0/24', name: 'network'},
+		approvedNetworkIpBody2 = {ip: '192.168.148.0/24', name: 'network'},
         machineGroupBody =     {'networks': ['network'], 'encryption_policy': 'encrypt_all'}
 
         req = rp.defaults({ 'headers': { 'Content-Type': 'application/json' }});
@@ -254,8 +257,9 @@ else
         return new Promise(function (resolve, reject) {
             req({'method': 'POST', 'uri': approvedNetworkUrl, 'body': JSON.stringify(approvedNetworkBody)})
             .then(function (response) {
-                    process.stdout.write('Adding address\n');
+                    process.stdout.write('Adding address range 1\n');
                     req({'method': 'POST', 'uri': approvedNetworkUrl + '/network/ip', 'body': JSON.stringify(approvedNetworkIpBody)})
+					req({'method': 'POST', 'uri': approvedNetworkUrl + '/network/ip', 'body': JSON.stringify(approvedNetworkIpBody2)})
                     .then(function (response) {
                             process.stdout.write('Modifying group\n');
                             req({'method': 'PUT', 'uri': machineGroupUrl + '/Default', 'body': JSON.stringify(machineGroupBody)})
@@ -265,7 +269,7 @@ else
                             .catch(function (error) {
                                 reject(error);
                             });
-                    })
+                    })													
                     .catch(function (error) {
                         reject(error);
                     });
@@ -321,6 +325,28 @@ else
                 });
         });
 	}
+	
+	
+	function sds_encryption()
+	{
+		return new Promise(function (resolve, reject) {
+            req({'method': 'GET', 'uri': machinesUrl})
+                .then(function (response) {
+                    var parsed = JSON.parse(response);
+                    for (var i = 0; i < parsed.length; ++i)
+                    {
+						var line = parsed[i].name;
+						req({'method': 'PUT', 'uri': machinesUrl + '/'+parsed[i].uuid +/encryption/**, 'body': JSON.stringify(sdsdeviceBody)});
+						process.stdout.write('Adding Machine: ' + line + '(' + parsed[i].uuid + ')' + '\n');
+                    }
+                    resolve();
+                })
+                .catch(function (error) {
+                    reject(error);
+                });
+        });
+	}
+	
 	
     function handle_error(error)
     {
@@ -423,6 +449,17 @@ else
 		var p = log_in_as_user()
             .then(set_access_token)
             .then(remove_machines)
+            .catch(handle_error);
+        
+    }
+	
+	else if (workflow === 'sdsencryptall')
+    {
+		
+		process.stdout.write(':: Encrypt SDS Device Machines ::\n\n');
+		var p = log_in_as_user()
+            .then(set_access_token)
+            .then(sds_encryption)
             .catch(handle_error);
         
     }
