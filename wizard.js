@@ -330,7 +330,6 @@ else
 	
 	function sds_encryption()
 	{
-		
 		process.stdout.write('Triggering SDS encryption on all devices...\n');
 		return new Promise(function (resolve, reject) {
             req({'method': 'GET', 'uri': machinesUrl})
@@ -358,36 +357,6 @@ else
                 });
         });
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		process.stdout.write('Triggering SDS encryption on all devices...\n');
-		return new Promise(function (resolve, reject) {
-            req({'method': 'GET', 'uri': machinesUrl})
-                .then(function (response) {
-                    var parsed = JSON.parse(response);
-                    for (var i = 0; i < parsed.length; ++i)
-                    {
-						var line = parsed[i].name;
-						
-						req({'method': 'PUT', 'uri': machinesUrl + '/'+parsed[i].uuid +'/encryption/dev/sdb', 'body': JSON.stringify(sdsdeviceBody)});
-						process.stdout.write('Encrypting sdb on machine: ' + line + '\n');
-                    }
-                    resolve();
-                })
-                .catch(function (error) {
-                    reject(error);
-                });
-        });
 	}
 	
 	
