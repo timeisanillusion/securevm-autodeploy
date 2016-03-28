@@ -342,9 +342,12 @@ else
                         {
                             
 							    /* If the device has /dev/ in the name then */
-							if parsed[i].resources[j].mpoint.indexOf('/dev/' >= 0 ){
+							var mount = parsed[i].resources[j].mpoint;
+							
+							if (mount.indexOf('/dev/sd' >= 0 )){
 								var line = parsed[i].name;
-								req({'method': 'PUT', 'uri': machinesUrl + '/'+parsed[i].uuid +'/encryption/+ parsed[i].resources[j].id', 'body': JSON.stringify(sdsdeviceBody)});
+								process.stdout.write('Found ' mount + '\n');
+								req({'method': 'PUT', 'uri': machinesUrl + '/'+parsed[i].uuid +'/encryption/' + parsed[i].resources[j].id', 'body': JSON.stringify(sdsdeviceBody)});
 								process.stdout.write('Requested encryption of ' + parsed[i].resources[j].id + ' on machine: ' + line + '\n');
 							}
 						}
