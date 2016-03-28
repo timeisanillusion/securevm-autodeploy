@@ -98,7 +98,7 @@ else
         setDnsBody = { 'ip': dns },
         joinClusterBody = { 'host': join_addr, 'rem_password': remSecadminPassword , 'rem_user': 'secadmin'},
 		
-		sdsdeviceBody = {'block': false, 'encrypt': '/dev/sdb'},
+		sdsdeviceBody = {'block': false, 'encrypt': 'encrypt'},
 
         approvedNetworkBody = { 'name': 'network','description': 'created'},
         approvedNetworkIpBody = {ip: '192.168.42.0/24', name: 'network'},
@@ -291,7 +291,7 @@ else
                         var line = parsed[i].name + '(' + parsed[i].uuid + ') ' + parsed[i].status;
                         for (var j = 0; j < parsed[i].resources.length; ++j)
                         {
-                            line += ' ' + parsed[i].resources[j].mpoint + '(' + parsed[i].resources[j].state + ':' + parsed[i].resources[j].percentage + ')';
+                            line += ' ' + parsed[i].resources[j].mpoint + '(' + parsed[i].resources[j].id + parsed[i].resources[j].state + ':' + parsed[i].resources[j].percentage + ')';
                         }
 
                         process.stdout.write(line + '\n');
@@ -308,6 +308,7 @@ else
 	
 	function remove_machines()
 	{
+		process.stdout.write('Removing Machines...\n');
 		return new Promise(function (resolve, reject) {
             req({'method': 'GET', 'uri': machinesUrl})
                 .then(function (response) {
@@ -329,6 +330,47 @@ else
 	
 	function sds_encryption()
 	{
+		
+		process.stdout.write('Triggering SDS encryption on all devices...\n');
+		return new Promise(function (resolve, reject) {
+            req({'method': 'GET', 'uri': machinesUrl})
+                .then(function (response) {
+                    var parsed = JSON.parse(response);
+                    for (var i = 0; i < parsed.length; ++i)
+                    {
+                        var line = parsed[i].name + '(' + parsed[i].uuid + ') ' + parsed[i].status;
+                        for (var j = 0; j < parsed[i].resources.length; ++j)
+                        {
+                            
+							    /* If the device has /dev/ in the name then */
+							if parsed[i].resources[j].mpoint.indexOf('/dev/' >= 0 ){
+								var line = parsed[i].name;
+								req({'method': 'PUT', 'uri': machinesUrl + '/'+parsed[i].uuid +'/encryption/+ parsed[i].resources[j].id', 'body': JSON.stringify(sdsdeviceBody)});
+								process.stdout.write('Requested encryption of ' + parsed[i].resources[j].id + ' on machine: ' + line + '\n');
+							}
+						}
+                        
+                    }
+                    resolve();
+                })
+                .catch(function (error) {
+                    reject(error);
+                });
+        });
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		process.stdout.write('Triggering SDS encryption on all devices...\n');
 		return new Promise(function (resolve, reject) {
             req({'method': 'GET', 'uri': machinesUrl})
                 .then(function (response) {
@@ -336,8 +378,9 @@ else
                     for (var i = 0; i < parsed.length; ++i)
                     {
 						var line = parsed[i].name;
-						req({'method': 'PUT', 'uri': machinesUrl + '/'+parsed[i].uuid +'/encryption/**', 'body': JSON.stringify(sdsdeviceBody)});
-						process.stdout.write('Adding Machine: ' + line + '(' + parsed[i].uuid + ')' + '\n');
+						
+						req({'method': 'PUT', 'uri': machinesUrl + '/'+parsed[i].uuid +'/encryption/dev/sdb', 'body': JSON.stringify(sdsdeviceBody)});
+						process.stdout.write('Encrypting sdb on machine: ' + line + '\n');
                     }
                     resolve();
                 })
