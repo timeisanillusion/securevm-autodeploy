@@ -291,7 +291,7 @@ else
                         var line = parsed[i].name + '(' + parsed[i].uuid + ') ' + parsed[i].status;
                         for (var j = 0; j < parsed[i].resources.length; ++j)
                         {
-                            line += ' ' + parsed[i].resources[j].mpoint + '(' + parsed[i].resources[j].id + parsed[i].resources[j].state + ':' + parsed[i].resources[j].percentage + ')';
+                            line += ' ' + parsed[i].resources[j].mpoint + '(' + parsed[i].resources[j].state + ':' + parsed[i].resources[j].percentage + ')';
                         }
 
                         process.stdout.write(line + '\n');
@@ -341,17 +341,17 @@ else
                         for (var j = 0; j < parsed[i].resources.length; ++j)
                         {
                             
-							    /* If the device has /dev/ in the name then */
+							/* If the device has /dev/ in the name then */
 							var mount = parsed[i].resources[j].mpoint;
-							
-							if (mount.indexOf('/dev/sd' >= 0 )){
+							var myindex = mount.indexOf('/dev/sd')
+							if (myindex >= 0 ){
 								var line = parsed[i].name;
-								process.stdout.write('Found ' mount + '\n');
-								req({'method': 'PUT', 'uri': machinesUrl + '/'+parsed[i].uuid +'/encryption/' + parsed[i].resources[j].id', 'body': JSON.stringify(sdsdeviceBody)});
-								process.stdout.write('Requested encryption of ' + parsed[i].resources[j].id + ' on machine: ' + line + '\n');
+								process.stdout.write('Found ' + mount + '\n');
+								/* Give the mount ID */
+								req({'method': 'PUT', 'uri': machinesUrl + '/'+parsed[i].uuid +'/encryption/' + parsed[i].resources[j].id, 'body': JSON.stringify(sdsdeviceBody)});
+								process.stdout.write('Requested encryption of ' + parsed[i].resources[j].mpoint + ' on machine: ' + line + '\n');
 							}
-						}
-                        
+						}  
                     }
                     resolve();
                 })
