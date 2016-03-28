@@ -452,6 +452,7 @@ else
             .catch(handle_error);
         
     }
+<<<<<<< HEAD
 	
 	else if (workflow === 'sdsencryptall')
     {
@@ -461,6 +462,19 @@ else
             .then(set_access_token)
             .then(sds_encryption)
             .catch(handle_error);
+=======
+    	else if (workflow === 'license')
+    {
+		
+	process.stdout.write(':: Uploading license ::\n\n');
+	var p = log_in_as_user()
+        .then(set_access_token)
+        .then(read_license_file)
+        .then(upload_license_file)
+        .then(get_license_id)
+        .then(assign_license)
+        .catch(handle_error);
+>>>>>>> origin/master
         
     }
 
