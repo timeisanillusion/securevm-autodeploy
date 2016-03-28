@@ -336,7 +336,7 @@ else
                     for (var i = 0; i < parsed.length; ++i)
                     {
 						var line = parsed[i].name;
-						req({'method': 'PUT', 'uri': machinesUrl + '/'+parsed[i].uuid +/encryption/**, 'body': JSON.stringify(sdsdeviceBody)});
+						req({'method': 'PUT', 'uri': machinesUrl + '/'+parsed[i].uuid +'/encryption/**', 'body': JSON.stringify(sdsdeviceBody)});
 						process.stdout.write('Adding Machine: ' + line + '(' + parsed[i].uuid + ')' + '\n');
                     }
                     resolve();
