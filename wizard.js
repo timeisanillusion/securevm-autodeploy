@@ -8,8 +8,7 @@
 var optimist    = require('optimist'),
     rp          = require('request-promise'),
     Promise     = require('bluebird'),
-	prompt		= require('prompt')
-    readFile    = Promise.promisify(require('fs').readFile),
+	readFile    = Promise.promisify(require('fs').readFile),
 
     cliConfig = optimist
     .usage('Handy script to do automatic CLC post-deploy configuration')
@@ -574,7 +573,7 @@ else
 		process.stdout.write(':: Deleting Machines ::\n\n');
 		var p = log_in_as_user()
             .then(set_access_token)
-            .then(remove_machines)
+            .then(remove_ma
             .catch(handle_error);
         
     }
@@ -600,11 +599,20 @@ else
             .then(listsvmsdsmachines)
 			.then(processsdsdevices)
 			.catch(handle_error);
-			
-
-        
+			       
     }
-	
+	else if (workflow === 'sdslist')
+    {
+		
+		
+		process.stdout.write(':: Script to encrypt SDS devices ::\n\n');
+		var p = log_in_as_user()
+            .then(set_access_token)
+            .then(listsvmsdsmachines)
+			.then(processsdsdevices)
+			.catch(handle_error);
+			       
+    }
 	
 
 }
