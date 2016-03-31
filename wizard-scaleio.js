@@ -1,5 +1,5 @@
 /* To install all dependencies do:
-*     	npm -g install optimist request-promise bluebird prompt
+*     	npm -g install optimist request-promise bluebird 
 *		Full credit for this goes to Mikhail Karasik, EMC Dev
 *		Minor edits by James Scott, EMC SE 
 */
@@ -8,7 +8,6 @@
 var optimist    = require('optimist'),
     rp          = require('request-promise'),
     Promise     = require('bluebird'),
-	prompt		= require('prompt')
     readFile    = Promise.promisify(require('fs').readFile),
 
     cliConfig = optimist
@@ -28,6 +27,11 @@ var optimist    = require('optimist'),
     .alias('d', 'dns')                                      .describe('d', 'DNS server IP adress')
     .alias('j', 'join')     .default('j', '127.0.0.1')      .describe('j', 'Address of CLC to join during \'join\' workflow')
     .alias('i', 'rempwd')   .default('i', 'tsFt45tq4$')  .describe('i', 'Password of the master\'s secadmin')
+	
+	
+	.alias('sa', 'scaleioaddr')   .default('sa', 'https://192.168.148.202')  .describe('i', 'Address of the ScaleIO gateway')
+	
+	
     ;
 
 
@@ -65,8 +69,7 @@ else
         licenseFileName = argv.l,
         backupKeyFileName = argv.k,
         backupFileName = argv.b,
-        serverName = argv.n,
-        baseUrl = argv.a,
+        serverName = argv.n
         workflow = argv.w,
         lockbox_code = argv.c,
         dns = argv.d,
@@ -117,8 +120,12 @@ else
 		scaleio_svmlist = [],
 		scaleio_sdslist = [];
 	
-
-
+		
+		
+		
+		
+		SIObaseUrl = argv.sa,
+		loginSIObaseUrl = SIObaseUrl + '/cloudlink/oauth/token?grant_type=client_credentials&client_id=secadmin&client_secret=' + secadminPassword + '&scope=built_in_client',
 	
 		
 
