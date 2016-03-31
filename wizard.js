@@ -573,7 +573,7 @@ else
 		process.stdout.write(':: Deleting Machines ::\n\n');
 		var p = log_in_as_user()
             .then(set_access_token)
-            .then(remove_ma
+            .then(remove_machines)
             .catch(handle_error);
         
     }
